@@ -19,3 +19,14 @@ export class PointerTap {
  }
  cancel(id:number){this.active.delete(id);this.blocked=true}
 }
+
+/** Pair only qualified taps on the same piece; dragging and multitouch cancel the pair. */
+export class DoubleTap {
+ private previous:{id:string;x:number;y:number;time:number}|null=null;
+ register(id:string,x:number,y:number,time:number,tolerance:number):boolean{
+  const previous=this.previous;
+  if(previous&&previous.id===id&&time>=previous.time&&time-previous.time<=350&&Math.hypot(x-previous.x,y-previous.y)<=tolerance){this.previous=null;return true;}
+  this.previous={id,x,y,time};return false;
+ }
+ cancel(){this.previous=null;}
+}

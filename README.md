@@ -6,7 +6,8 @@ An interactive 3D anatomy explorer built with React, Three.js, and shadcn/ui. Ta
 
 ## Explore
 
-- Orbit, zoom, and select structures directly on the body.
+- Orbit, zoom toward the cursor, and select structures directly on the body.
+- Single-click to highlight a piece; double-click or double-tap to focus it without hiding the surrounding anatomy.
 - Toggle individual systems or use skeleton and organ presets.
 - Move from assembled anatomy to a spaced inventory of every visible piece.
 - Search anatomical names and source identifiers.
@@ -15,10 +16,10 @@ An interactive 3D anatomy explorer built with React, Three.js, and shadcn/ui. Ta
 
 ## Study anatomy
 
-Choose **Study** to open the regional workspace. Upper limb, thorax, and head-and-neck starter collections combine named structures across systems. They are explicit selections from the available atlas, not exhaustive regional coverage.
+Choose **Study** to open the regional workspace. Choose from **34 regions in seven groups**: head and neck, back, thorax, abdomen, pelvis and perineum, upper limb, and lower limb. Each group offers an overview and focused subdivisions, such as the elbow, forearm, wrist and hand, knee, or ankle and foot. Collections cover 149 named concepts and 1,228 modeled pieces. Membership reflects available atlas anatomy; coverage notes identify sparse regions. Joint collections retain whole contextual bones.
 
 1. **Choose a region.** The camera frames its anatomy. System checkboxes filter the collection; click a structure in the list or model to inspect it.
-2. **Explore relationships.** Pin up to six labels, toggle labels, hide selected pieces, and use **Undo hide** or **Restore all**. The patient compass follows the camera: R/L = right/left, A/P = anterior/posterior, S/I = superior/inferior.
+2. **Explore relationships.** Pin up to six labels, toggle labels, hide selected pieces, and use **Undo hide** or **Restore all**. Selecting a hidden list item reveals its pieces. Selected structures have a contrasting outline and are shown through surrounding anatomy in both viewers. Double-click/double-tap a piece or choose **Focus selection** for a close-up in context; wheel zoom follows the cursor. The patient compass follows the camera: R/L = right/left, A/P = anterior/posterior, S/I = superior/inferior.
 3. **Practice.** Use **Name a structure** to type the atlas name of a highlighted concept, or **Find a structure** to pick it from separated concepts. Multi-piece concepts remain together in the finding view; any member piece counts. Labels and inspection are suppressed during questions. Case, spacing and punctuation do not affect naming answers. Reveal, advance, or end a session at any time.
 4. **Review mistakes.** Incorrect and revealed answers enter **Revision**, with one miss recorded per answered question. Retry naming/finding, inspect a saved structure, or **Mark reviewed** to remove it. Correct retries do not remove items automatically. Revision is saved in this browser, without an account or synchronization; if storage is unavailable, it remains in memory while the workspace is open.
 
@@ -41,9 +42,11 @@ Open http://localhost:3016. To build the static site, run `npm run build`; the o
 npm run check
 node scripts/validate-atlas.mjs
 node scripts/validate-interactions.mjs
+node scripts/validate-study-regions.mjs
 node scripts/validate-study.mjs
 node scripts/validate-study-quiz.mjs
 node scripts/validate-study-revision.mjs
+node scripts/validate-selection-gestures.mjs
 npm run build
 ```
 

@@ -1,0 +1,18 @@
+import assert from 'node:assert/strict';
+import {DoubleTap} from '../app/pointer-tap.ts';
+import {revealPieces,hiddenPieces} from '../app/study-model.ts';
+const tap=new DoubleTap();
+assert.equal(tap.register('a',20,20,0,10),false,'First click only selects');
+assert.equal(tap.register('a',21,20,200,10),true,'Second nearby click focuses');
+assert.equal(tap.register('a',20,20,250,10),false,'Double click consumes the pair');
+tap.cancel();
+assert.equal(tap.register('a',20,20,300,10),false,'Drag/cancellation breaks a double click');
+assert.equal(tap.register('b',20,20,400,10),false,'Different piece is a new selection');
+assert.equal(tap.register('b',80,20,450,10),false,'Far apart taps do not focus');
+assert.equal(tap.register('b',80,20,900,10),false,'Slow taps do not focus');
+tap.cancel();
+assert.equal(tap.register('a',20,20,1000,24),false);
+assert.equal(tap.register('a',35,20,1200,24),true,'Touch permits modest movement');
+assert.deepEqual(hiddenPieces(revealPieces([['a','b'],['c']],['a'])),['b','c'],'Selecting a hidden piece reveals just that piece');
+assert.deepEqual(revealPieces([['a']],['a']),[],'Revealing clears empty hide actions');
+console.log('Single click, double click/tap, movement, cancellation, and selected-piece revealing passed.');

@@ -1,25 +1,21 @@
 import type {Atlas, Concept, Part, SceneState} from './anatomy';
 
-export const REGIONS = [
-  {id:'upper-limb',name:'Upper limb',conceptIds:[
-    'FMA13303','FMA23463','FMA23466','FMA13394','FMA13321',
-    'FMA37682','FMA37683','FMA37692','FMA37693','FMA37694','FMA37667',
-    'FMA22689','FMA22730','FMA22796','FMA13324','FMA22908',
-  ]},
-  {id:'thorax',name:'Thorax',conceptIds:[
-    'FMA7088','FMA7309','FMA7310','FMA7485','FMA7574','FMA9139',
-    'FMA13295','FMA7394','FMA7131','FMA3736','FMA3768','FMA87217','FMA4720',
-  ]},
-  {id:'head-neck',name:'Head and neck',conceptIds:[
-    'FMA50801','FMA52748','FMA9711','FMA52749','FMA13407',
-    'FMA3939','FMA4724','FMA13341','FMA13343','FMA13344','FMA9625',
-  ]},
-] as const;
-export type RegionId = typeof REGIONS[number]['id'];
+import {REGIONS} from './study-regions.ts';
+export {REGIONS,REGION_GROUPS} from './study-regions.ts';
+export type {RegionId} from './study-regions.ts';
 
 export function regionConcepts(atlas:Atlas, regionId:string):Concept[]{
   const region=REGIONS.find(r=>r.id===regionId);
   return region?region.conceptIds.map(id=>atlas.concepts.find(c=>c.id===id)).filter((c):c is Concept=>!!c):[];
+}
+
+/** Saved concepts may now sit inside a broader catalog concept. */
+export function regionForConcept(atlas:Atlas,concept:Concept){
+  const focused=REGIONS.filter(r=>!r.overview);
+  return focused.find(r=>r.conceptIds.includes(concept.id))??focused.find(r=>{
+    const pieces=new Set(conceptPieces(regionConcepts(atlas,r.id)));
+    return concept.elements.length>0&&concept.elements.every(id=>pieces.has(id));
+  });
 }
 
 export function conceptPieces(concepts:readonly Concept[]):string[]{
@@ -38,6 +34,18 @@ export function hidePieces(history:readonly string[][],ids:readonly string[]):st
   return added.length?[...history,added]:[...history];
 }
 export function undoHide(history:readonly string[][]):string[][]{return history.slice(0,-1);}
+
+export function revealPieces(history:readonly string[][],ids:readonly string[]):string[][]{
+  const revealed=new Set(ids);return history.map(action=>action.filter(id=>!revealed.has(id))).filter(action=>action.length>0);
+}
+
+export function leaveIsolation<T extends Pick<SceneState,'isolate'|'focus'>>(state:T):T{
+  return {...state,isolate:false,focus:undefined};
+}
+
+export function studyFrameKey(state:Pick<SceneState,'study'|'scope'|'focus'|'inspectorOpen'>):string{
+  return state.study||state.focus?JSON.stringify([state.scope,state.focus,state.inspectorOpen]):'';
+}
 
 /** The same reserved area is used for camera fitting and projected labels. */
 export function studyViewport(width:number,height:number){

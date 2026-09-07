@@ -8,3 +8,12 @@ Approved scope: implement the four workflows in the conversation, in order, for 
 4. Review: automatically add missed/revealed concepts to a deduplicated revision collection. Persist only versioned concept identifiers and mistake counts in localStorage, validate loaded values against the atlas, recover from malformed/unavailable storage, and expose manual removal and retry. A correct answer does not silently remove a saved item.
 
 Use the current atlas without adding unsupported anatomical facts or external services. Reuse the renderer and selection geometry. Keep the existing explorer accessible. Support desktop and phone layouts, loading/error states, and keyboard-accessible forms and buttons. No new runtime dependencies.
+
+## User-requested interaction refinements
+
+Selection must remain identifiable through occluding anatomy in both viewers: render a contrasting outline and a translucent selection surface in a separate depth pass, maintaining selection's own surface depth. Picking prioritizes selected overlay geometry, including body-surface pieces. Selecting a hidden study list item reveals that item's pieces while retaining other hide history (supersedes the earlier hidden-selection behavior).
+
+Single-click selects an individual mesh; double-click or double-tap the same mesh within 350 ms focuses it in context. Dragging, cancellation, different pieces, and distant/slow taps do not focus. List double-click focuses its named concept. Explicit Focus selection buttons support keyboard use. Focus ends when returning from isolation or changing the explosion amount; changes of study scope/focus invalidate framing independently of reset counters. Wheel zoom follows the cursor using the installed OrbitControls capability.
+
+## Expanded regional coverage
+User requested whole-body regional navigation after testing the initial three collections. The catalog now contains seven group overviews and 27 subdivisions, with explicit atlas memberships, suitable initial views, and notes for limited source anatomy. This is practical study navigation; boundaries can overlap and the atlas does not model every anatomical structure.
