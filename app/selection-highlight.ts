@@ -1,7 +1,7 @@
 import * as T from 'three';
 
 /** A separate depth pass makes selection visible through context while retaining its own surface depth. */
-export function createSelectionHighlight(partState:T.DataTexture,selectionState:T.DataTexture,stateWidth:number){
+export function createSelectionHighlight(partState:T.DataTexture,selectionState:T.DataTexture,stateWidth:number,cutPlane=new T.Vector4(0,0,0,1)){
   const scene=new T.Scene(),resolution=new T.Vector2(1,1);
   const vertexShader=`
     attribute float partIndex;
@@ -12,10 +12,12 @@ export function createSelectionHighlight(partState:T.DataTexture,selectionState:
     uniform float outlinePixels;
     varying float enabled;
     varying vec3 surfaceNormal;
+    varying vec3 worldPosition;
     void main(){
       vec2 uv=vec2((partIndex+0.5)/stateWidth,0.5);
       vec4 state=texture2D(partState,uv);
       enabled=state.w*texture2D(selectionState,uv).r;
+      worldPosition=(modelMatrix*vec4(position+state.xyz,1.0)).xyz;
       surfaceNormal=normalize(normalMatrix*normal);
       gl_Position=projectionMatrix*modelViewMatrix*vec4(position+state.xyz,1.0);
       vec2 direction=surfaceNormal.xy;
@@ -24,15 +26,17 @@ export function createSelectionHighlight(partState:T.DataTexture,selectionState:
     }
   `;
   const material=(color:string,outlinePixels:number,opacity:number)=>new T.ShaderMaterial({
-    uniforms:{partState:{value:partState},selectionState:{value:selectionState},stateWidth:{value:stateWidth},resolution:{value:resolution},outlinePixels:{value:outlinePixels},color:{value:new T.Color(color)},opacity:{value:opacity}},
+    uniforms:{cutPlane:{value:cutPlane},partState:{value:partState},selectionState:{value:selectionState},stateWidth:{value:stateWidth},resolution:{value:resolution},outlinePixels:{value:outlinePixels},color:{value:new T.Color(color)},opacity:{value:opacity}},
     vertexShader,
     fragmentShader:`
+      uniform vec4 cutPlane;
+      varying vec3 worldPosition;
       uniform vec3 color;
       uniform float opacity;
       varying float enabled;
       varying vec3 surfaceNormal;
       void main(){
-        if(enabled<0.5)discard;
+        if(enabled<0.5 || dot(vec4(worldPosition,1.0),cutPlane)<0.0)discard;
         float light=0.6+0.4*abs(normalize(surfaceNormal).z);
         gl_FragColor=vec4(color*light,opacity);
         #include <colorspace_fragment>
@@ -43,9 +47,11 @@ export function createSelectionHighlight(partState:T.DataTexture,selectionState:
   const depth=material('#3ee8c5',0,1),outline=material('#006d79',3,.9),surface=material('#3ee8c5',0,.88);
   // Resolve selection's own depth before blending; rear surfaces must not bleed through its front surface.
   depth.colorWrite=false;
+  outline.side=T.BackSide;outline.depthTest=true;
   surface.depthWrite=false;
   return {
     scene,
+    setStyle:(style:'solid'|'outline'|'xray')=>{surface.visible=style!=='outline';surface.uniforms.opacity.value=style==='xray'?.3:.88;},
     resize:(width:number,height:number)=>resolution.set(width,height),
     add:(geometry:T.BufferGeometry)=>{
       for(const [mat,order] of [[depth,0],[outline,1],[surface,2]] as const){const mesh=new T.Mesh(geometry,mat);mesh.frustumCulled=false;mesh.renderOrder=order;scene.add(mesh);}

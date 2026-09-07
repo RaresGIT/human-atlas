@@ -2,7 +2,7 @@
 
 An interactive 3D anatomy explorer built with React, Three.js, and shadcn/ui. Take the BodyParts3D adult male reference apart into **2,234 individually selectable meshes**, explore **15 anatomical systems**, and search **3,432 named concepts**.
 
-**[Explore the live demo](https://human-atlas-seven.vercel.app)**
+**[Explore the live demo](https://annatlas.com)**
 
 ## Explore
 
@@ -18,12 +18,14 @@ An interactive 3D anatomy explorer built with React, Three.js, and shadcn/ui. Ta
 
 Choose **Study** to open the regional workspace. Choose from **34 regions in seven groups**: head and neck, back, thorax, abdomen, pelvis and perineum, upper limb, and lower limb. Each group offers an overview and focused subdivisions, such as the elbow, forearm, wrist and hand, knee, or ankle and foot. Collections cover 149 named concepts and 1,228 modeled pieces. Membership reflects available atlas anatomy; coverage notes identify sparse regions. Joint collections retain whole contextual bones.
 
-1. **Choose a region.** The camera frames its anatomy. System checkboxes filter the collection; click a structure in the list or model to inspect it.
-2. **Explore relationships.** Pin up to six labels, toggle labels, hide selected pieces, and use **Undo hide** or **Restore all**. Selecting a hidden list item reveals its pieces. Selected structures have a contrasting outline and are shown through surrounding anatomy in both viewers. Double-click/double-tap a piece or choose **Focus selection** for a close-up in context; wheel zoom follows the cursor. The patient compass follows the camera: R/L = right/left, A/P = anterior/posterior, S/I = superior/inferior.
-3. **Practice.** Use **Name a structure** to type the atlas name of a highlighted concept, or **Find a structure** to pick it from separated concepts. Multi-piece concepts remain together in the finding view; any member piece counts. Labels and inspection are suppressed during questions. Case, spacing and punctuation do not affect naming answers. Reveal, advance, or end a session at any time.
-4. **Review mistakes.** Incorrect and revealed answers enter **Revision**, with one miss recorded per answered question. Retry naming/finding, inspect a saved structure, or **Mark reviewed** to remove it. Correct retries do not remove items automatically. Revision is saved in this browser, without an account or synchronization; if storage is unavailable, it remains in memory while the workspace is open.
+1. **Explore.** Search within the region or across the atlas, filter by system and patient side, and expand grouped structures. Click to highlight; double-click or use **Focus [F]** to frame a structure. Pin up to six labels, hide or isolate structures, and navigate with Back/Forward or undo/redo.
+2. **See through anatomy.** Open **Appearance and cutaway** for solid, outline, or X-ray selection, surrounding opacity, and sagittal/coronal/transverse clipping. Right-click the model or use the overlap chooser to pick obscured structures. Cutaways expose uncapped mesh surfaces, not diagnostic cross-sections.
+3. **Practice.** Choose naming, separated finding, or finding in assembled regional anatomy. Filter the pool by system and side, select 5/10/20/all questions, request hints, and reveal difficult answers. Curated common synonyms are accepted; small spelling errors prompt an unscored retry. Labels and inspection stay hidden during questions.
+4. **Review.** Every scored answer is tracked locally. Correct answers return after 1, 3, 7, 14, then 30 days; misses return after 10 minutes. Practice due reviews or revisit all tracked items. Export/import revision JSON to transfer progress; old mistake lists migrate automatically.
+5. **Library.** Create named study sets and save scenes, including camera, selection, layers, pins and cutaway settings. Export/import the library, copy a scene link, or export a PNG with pinned annotations. The latest study workspace resumes automatically. Data remains in this browser unless explicitly exported or shared.
+6. **Lessons and cards.** Follow three guided lessons covering upper limb, thorax and abdomen, then practice their structures. Structure information includes 21 curated cards with educational source links; other structures show clearly labeled atlas/system context.
 
-The original explorer remains available through **Explorer**. Structure descriptions retain the existing distinction between dedicated explanations and general system context.
+The original explorer remains available through **Explorer**, including appearance/cutaway controls and visibility history. Keyboard shortcuts: **/** search, **F** focus, **H** hide, **Escape** clear, **Alt+Left/Right** history, **Ctrl/Cmd+Z** undo, **Ctrl/Cmd+Shift+Z** redo. Wheel zoom follows the cursor.
 
 ## Run locally
 
@@ -47,6 +49,10 @@ node scripts/validate-study.mjs
 node scripts/validate-study-quiz.mjs
 node scripts/validate-study-revision.mjs
 node scripts/validate-selection-gestures.mjs
+node scripts/validate-workspace.mjs
+node scripts/validate-renderer.mjs
+node scripts/validate-study-learning.mjs
+node scripts/validate-anatomy-content.mjs
 npm run build
 ```
 
@@ -63,6 +69,8 @@ This is an educational explorer, not a diagnostic or surgical tool.
 ## How it works
 
 Geometry is merged into batches. Per-structure GPU textures control translation, visibility, and selection, while component geometry supports accurate picking. Exploded layouts pack only the visible pieces. Rendering updates when the scene changes; orbit controls remain responsive without thousands of separate draw calls.
+
+Atlas indexes are cached, search results and expanded collections render in bounded pages, storage writes are debounced, and camera snapshots are emitted only after settling. Shared geometry remains batched; an idle-scene browser probe recorded zero draw calls over 600 ms. React and Three.js use separate production chunks so app updates can reuse cached libraries. Initial compressed geometry remains approximately 33 MB; these improvements do not eliminate the model download.
 
 The optional WebMCP tools expose anatomy search and inspection in compatible browsers. The visible interface works without them.
 

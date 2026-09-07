@@ -1,0 +1,34 @@
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import {atlasIndex,sidePieces,searchConcepts,createWorkspace,parseWorkspace,encodeScene,decodeScene,parseLibrary,addHistory} from '../app/workspace-model.ts';
+const atlas=JSON.parse(readFileSync('public/models/atlas.json','utf8'));
+const index=atlasIndex(atlas);
+assert.equal(index,atlasIndex(atlas),'Indexes are reused');
+const humerus=atlas.concepts.find(c=>c.name==='humerus');
+assert.ok(humerus);
+assert.equal(sidePieces(atlas,humerus.elements,'left').length,1);
+assert.equal(sidePieces(atlas,humerus.elements,'right').length,1);
+assert.ok(searchConcepts(atlas,atlas.concepts,'heart','all','both').some(c=>c.name==='heart'));
+assert.equal(searchConcepts(atlas,atlas.concepts,'zzzxnope','all','both').length,0);
+const workspace=createWorkspace(atlas,'arm');
+workspace.scene.selected=humerus.elements;workspace.selection=humerus;
+assert.equal(parseWorkspace(atlas,JSON.stringify(workspace)).region,'arm');
+assert.equal(parseWorkspace(atlas,'bad'),null);
+assert.equal(parseWorkspace(atlas,JSON.stringify({...workspace,region:'fake'})),null);
+assert.deepEqual(decodeScene(atlas,encodeScene(workspace)).scene.selected,humerus.elements);
+assert.equal(decodeScene(atlas,'#scene=garbage'),null);
+assert.equal(parseWorkspace(atlas,JSON.stringify({...workspace,scene:{...workspace.scene,camera:{position:[Infinity,0,0],target:[0,0,0]}}})).scene.camera,undefined);
+assert.throws(()=>parseLibrary(atlas,'oops'));
+assert.throws(()=>parseLibrary(atlas,JSON.stringify({version:1,sets:[{id:'x',name:'x',conceptIds:['fake']}],scenes:[]})));
+assert.equal(parseLibrary(atlas,JSON.stringify({version:1,sets:[{id:'x',name:'Arm',conceptIds:[humerus.id,humerus.id]}],scenes:[]})).sets[0].conceptIds.length,1);
+const history=addHistory({past:[1],present:2,future:[3]},4);
+assert.deepEqual(history,{past:[1,2],present:4,future:[]});
+assert.equal(addHistory({past:Array(100).fill(0),present:1,future:[]},2).past.length,40);
+console.log('Workspace validation, sharing, bounded history, side filters and index reuse passed.');
+
+const chest=createWorkspace(atlas,'thorax'),lung=atlas.concepts.find(c=>c.name==='right lung'),heart=atlas.concepts.find(c=>c.name==='heart');
+chest.scene.selected=lung.elements;chest.selection=heart;
+assert.notEqual(parseWorkspace(atlas,JSON.stringify(chest)).selection?.name,'heart','Imported label cannot misidentify selected meshes');
+
+chest.selection=null;
+assert.equal(parseWorkspace(atlas,JSON.stringify(chest)).selection,null,'Lesson highlights retain explicit null inspector');
