@@ -31,3 +31,17 @@ export function isPartVisible(part:Part,state:Pick<SceneState,'visible'|'selecte
   if(state.hidden?.includes(part.id))return false;
   return state.isolate?state.selected.includes(part.id):state.visible.includes(part.system)||state.selected.includes(part.id);
 }
+
+export function hiddenPieces(history:readonly string[][]):string[]{return [...new Set(history.flat())];}
+export function hidePieces(history:readonly string[][],ids:readonly string[]):string[][]{
+  const hidden=new Set(hiddenPieces(history)),added=[...new Set(ids)].filter(id=>!hidden.has(id));
+  return added.length?[...history,added]:[...history];
+}
+export function undoHide(history:readonly string[][]):string[][]{return history.slice(0,-1);}
+
+/** The same reserved area is used for camera fitting and projected labels. */
+export function studyViewport(width:number,height:number){
+  if(width>height&&height<=600)return {left:310,right:width-16,top:85,bottom:height-70};
+  if(width<768)return {left:16,right:width-16,top:140,bottom:height*.55-45};
+  return {left:370,right:width-20,top:100,bottom:height-100};
+}
