@@ -72,6 +72,13 @@ The repository includes browser-ready geometry. Rebuilding it is optional: obtai
 
 ## Deploy
 
+This fork uses the Vercel `human-atlas` project connected to `RaresGIT/human-atlas`:
+
+- `main` is the production branch for `annatlas.com`.
+- `dev` creates preview deployments for `dev.annatlas.com`. Push development changes here to test them before merging into `main`.
+- The development subdomain must have a CNAME to the target shown in Vercel project domain settings.
+
+
 Import this repository into Vercel as a Vite project. The included `vercel.json` configures `npm ci`, `npm run build`, and the `dist` output directory. It can also be served by a static host.
 
 ## License
