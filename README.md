@@ -13,6 +13,17 @@ An interactive 3D anatomy explorer built with React, Three.js, and shadcn/ui. Ta
 - Isolate a selected structure and read its details.
 - Use compact controls and detail panels on mobile.
 
+## Study anatomy
+
+Choose **Study** to open the regional workspace. Upper limb, thorax, and head-and-neck starter collections combine named structures across systems. They are explicit selections from the available atlas, not exhaustive regional coverage.
+
+1. **Choose a region.** The camera frames its anatomy. System checkboxes filter the collection; click a structure in the list or model to inspect it.
+2. **Explore relationships.** Pin up to six labels, toggle labels, hide selected pieces, and use **Undo hide** or **Restore all**. The patient compass follows the camera: R/L = right/left, A/P = anterior/posterior, S/I = superior/inferior.
+3. **Practice.** Use **Name a structure** to type the atlas name of a highlighted concept, or **Find a structure** to pick it from separated concepts. Multi-piece concepts remain together in the finding view; any member piece counts. Labels and inspection are suppressed during questions. Case, spacing and punctuation do not affect naming answers. Reveal, advance, or end a session at any time.
+4. **Review mistakes.** Incorrect and revealed answers enter **Revision**, with one miss recorded per answered question. Retry naming/finding, inspect a saved structure, or **Mark reviewed** to remove it. Correct retries do not remove items automatically. Revision is saved in this browser, without an account or synchronization; if storage is unavailable, it remains in memory while the workspace is open.
+
+The original explorer remains available through **Explorer**. Structure descriptions retain the existing distinction between dedicated explanations and general system context.
+
 ## Run locally
 
 Requires Node.js 22.13 or newer. No API keys or accounts are needed.
@@ -30,6 +41,9 @@ Open http://localhost:3016. To build the static site, run `npm run build`; the o
 npm run check
 node scripts/validate-atlas.mjs
 node scripts/validate-interactions.mjs
+node scripts/validate-study.mjs
+node scripts/validate-study-quiz.mjs
+node scripts/validate-study-revision.mjs
 npm run build
 ```
 
