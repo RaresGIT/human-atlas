@@ -1,0 +1,117 @@
+/* Shared type scale for Explorer, Study, and portaled UI. */
+:root {
+  --font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --text-micro: 0.625rem;
+  --text-caption: 0.6875rem;
+  --text-label: 0.75rem;
+  --text-control: 0.8125rem;
+  --text-body: 0.875rem;
+  --text-input: 1rem;
+  --text-subheading: 1.125rem;
+  --text-heading-sm: 1.25rem;
+  --text-heading: 1.5rem;
+  --text-title-sm: 1.75rem;
+  --text-title: 2rem;
+  --text-score: 2.625rem;
+  font-size: 100%;
+  line-height: 1.5;
+}
+
+body {
+  font-family: var(--font-ui);
+  font-size: var(--text-body);
+  font-weight: 400;
+}
+
+button, input, select, textarea, kbd {
+  font-family: inherit;
+  letter-spacing: normal;
+}
+
+h1, h2, h3, [data-slot=sheet-title] {
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.025em;
+}
+
+.study-panel h2, .about-sheet [data-slot=sheet-title] {
+  font-size: var(--text-heading);
+  letter-spacing: -0.025em;
+}
+
+.study-panel h3, .study-revision-list h3, .overlap-picker h3,
+.about-copy h3 {
+  font-size: var(--text-input);
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+}
+
+.study-panel, .detail-scroll, .about-copy,
+.about-sheet [data-slot=sheet-description], .structure-card {
+  font-size: var(--text-body);
+  line-height: 1.6;
+}
+
+.study-panel h2, .study-panel h3, .study-answer-name,
+.structure-title, .search-result-name, .part-hover, .study-pin {
+  overflow-wrap: anywhere;
+}
+
+.eyebrow {
+  font-size: var(--text-caption);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  line-height: 1.4;
+}
+
+.study-panel summary, .detail-scroll summary, .explorer-tools summary {
+  font-size: var(--text-control);
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.study-header button, .study-tabs button, .study-camera button,
+.study-actions button, .study-history button, .study-selection button,
+.explorer-tools .study-actions button, .file-button {
+  font-size: var(--text-label);
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.study-structures button, .library-entries li > button:first-child,
+.saved-scene > button:first-child {
+  font-size: var(--text-control);
+  line-height: 1.5;
+}
+
+.study-pin { font-size: var(--text-label); }
+.study-panel button {
+  max-width: 100%;
+  height: auto;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.study-panel section > button,
+.study-panel section > div > button {
+  font-size: var(--text-label);
+  line-height: 1.4;
+  min-height: 40px;
+  padding-block: 8px;
+}
+.compass-title { font-size: var(--text-micro); letter-spacing: 0.04em; }
+.compass-axis { font-size: var(--text-caption); }
+
+.small-number, .system-count, .explode-label output, .study-score {
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 767px) {
+  .study-panel h2, .about-sheet [data-slot=sheet-title] {
+    font-size: var(--text-heading-sm);
+  }
+  .study-workspace input:not([type=checkbox]):not([type=range]),
+  .study-workspace select, .study-workspace textarea, .explorer-tools select {
+    font-size: var(--text-input);
+  }
+}
