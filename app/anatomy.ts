@@ -22,7 +22,8 @@ export interface Atlas {version:string;sex?:'male';source?:string;scope?:string;
 export type View = 'three-quarter'|'front'|'back'|'side';
 export interface CameraPose {position:[number,number,number];target:[number,number,number];viewOffset?:{fullWidth:number;fullHeight:number;offsetX:number;offsetY:number;width:number;height:number}}
 export interface CutawayPlane {axis:'x'|'y'|'z';position:number;invert:boolean}
-export interface SceneState {selectionStyle?:'solid'|'outline'|'xray';contextOpacity?:number;cutaway?:CutawayPlane;chooseAtPoint?:boolean;camera?:CameraPose;cameraRevision?:number;capture?:number;inspectorOpen?:boolean;explode:number;visible:SystemId[];selected:string[];isolate:boolean;view:View;rotate:boolean;reset:number;scope?:string[];hidden?:string[];focus?:string[];study?:boolean;labels?:Concept[];labelsVisible?:boolean;hideNames?:boolean;inventoryGroups?:Concept[]}
+export interface StudyLayout {panel:'browse'|'wide';inspector:boolean;sheet:'collapsed'|'half'|'expanded'}
+export interface SceneState {rotationDirection?:1|-1;studyLayout?:StudyLayout;selectionStyle?:'solid'|'outline'|'xray';contextOpacity?:number;cutaway?:CutawayPlane;chooseAtPoint?:boolean;camera?:CameraPose;cameraRevision?:number;capture?:number;inspectorOpen?:boolean;explode:number;visible:SystemId[];selected:string[];isolate:boolean;view:View;rotate:boolean;reset:number;scope?:string[];hidden?:string[];focus?:string[];study?:boolean;labels?:Concept[];labelsVisible?:boolean;hideNames?:boolean;inventoryGroups?:Concept[]}
 export const DEFAULT_VISIBLE:SystemId[] = ['cardiac','sensory','skeletal','muscular','arterial','venous','nervous','respiratory','digestive','urinary','lymphatic','endocrine','reproductive','connective'];
 export const EXPLANATIONS:Record<string,string> = {
  'heart':'A muscular pump in the chest. Its right side sends blood to the lungs; its left side sends blood through the systemic circulation.',

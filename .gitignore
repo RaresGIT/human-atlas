@@ -37,3 +37,7 @@ next-env.d.ts
 /outputs/
 /work/
 *.tsbuildinfo
+
+# Browser test artifacts
+/test-results/
+/playwright-report/

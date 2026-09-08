@@ -1,4 +1,4 @@
-import type {Atlas, Concept, Part, SceneState} from './anatomy';
+import type {Atlas, Concept, Part, SceneState, StudyLayout} from './anatomy';
 
 import {REGIONS} from './study-regions.ts';
 export {REGIONS,REGION_GROUPS} from './study-regions.ts';
@@ -43,13 +43,17 @@ export function leaveIsolation<T extends Pick<SceneState,'isolate'|'focus'>>(sta
   return {...state,isolate:false,focus:undefined};
 }
 
-export function studyFrameKey(state:Pick<SceneState,'study'|'scope'|'focus'|'inspectorOpen'>):string{
-  return state.study||state.focus?JSON.stringify([state.scope,state.focus,state.inspectorOpen]):'';
+export function studyFrameKey(state:Pick<SceneState,'study'|'scope'|'focus'|'inspectorOpen'|'studyLayout'>):string{
+  return state.study||state.focus?JSON.stringify([state.scope,state.focus,state.inspectorOpen,state.studyLayout]):'';
 }
 
 /** The same reserved area is used for camera fitting and projected labels. */
-export function studyViewport(width:number,height:number){
-  if(width>height&&height<=600)return {left:310,right:width-16,top:85,bottom:height-70};
-  if(width<768)return {left:16,right:width-16,top:140,bottom:height*.55-45};
-  return {left:370,right:width-20,top:100,bottom:height-100};
+export function studyViewport(width:number,height:number,layout?:StudyLayout){
+  const sheet=layout?.sheet??'half';
+  if(width>height&&height<=600)return {left:sheet==='collapsed'?16:318,right:width-76,top:104,bottom:Math.max(184,height-100)};
+  if(width<768){
+    const reserved=sheet==='collapsed'?64:Math.min(height*.44,420);
+    return {left:16,right:width-76,top:148,bottom:Math.max(228,height-reserved-32)};
+  }
+  return {left:layout?.panel==='wide'?472:336,right:width-(layout?.inspector&&width>=1100?392:80),top:width<1100?140:96,bottom:height-130};
 }
